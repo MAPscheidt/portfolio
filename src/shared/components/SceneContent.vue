@@ -10,7 +10,7 @@
   <!-- DeLorean Model from GLTF (Scaled down to fit scene bounds) -->
   <TresGroup ref="easterEggWrapperRef">
     <TresGroup ref="deloreanRef" :position="[0, -0.4, 0] as any">
-      <GLTFModel path="/models/delorean_-_time_machine_-_low_poly.glb" draco :scale="[0.4, 0.4, 0.4] as any" />
+      <GLTFModel :path="`${import.meta.env.BASE_URL}models/delorean_-_time_machine_-_low_poly.glb`" draco :scale="[0.4, 0.4, 0.4] as any" />
       <TresPointLight ref="overloadLightRef" :position="[0, 1, 0] as any" color="#ffffff" :intensity="0" :distance="50" />
     </TresGroup>
   </TresGroup>
@@ -62,7 +62,7 @@
     
     <!-- Glowing Hoverboard Model -->
     <TresGroup ref="hoverboardMeshRef">
-      <GLTFModel path="/models/back_to_the_future_ii_-_hover_board_low_poly.glb" draco :scale="[1, 1, 1] as any" />
+      <GLTFModel :path="`${import.meta.env.BASE_URL}models/back_to_the_future_ii_-_hover_board_low_poly.glb`" draco :scale="[1, 1, 1] as any" />
     </TresGroup>
   </TresGroup>
 
