@@ -2,44 +2,15 @@
   <div class="w-full max-w-lg bg-neutral-900/60 backdrop-blur-md p-8 border-l-4 border-[#00ffff] rounded-none shadow-[0_0_15px_rgba(0,255,255,0.3)] pointer-events-auto">
     <h3 class="text-xl font-bold uppercase tracking-widest text-white mb-6">Initiate Contact</h3>
     
-    <form @submit.prevent="handleSubmit" class="space-y-4">
-      <div>
-        <label for="name" class="block text-xs uppercase tracking-widest text-[#00ffff] mb-1">Name</label>
-        <input 
-          id="name" 
-          type="text" 
-          required
-          class="w-full bg-neutral-950/50 border border-neutral-700 focus:border-[#00ffff] focus:ring-1 focus:ring-[#00ffff] text-white px-4 py-2 transition-all outline-none"
-        />
-      </div>
-      
-      <div>
-        <label for="email" class="block text-xs uppercase tracking-widest text-[#00ffff] mb-1">Email</label>
-        <input 
-          id="email" 
-          type="email" 
-          required
-          class="w-full bg-neutral-950/50 border border-neutral-700 focus:border-[#ff00ff] focus:ring-1 focus:ring-[#ff00ff] text-white px-4 py-2 transition-all outline-none"
-        />
-      </div>
-
-      <div>
-        <label for="message" class="block text-xs uppercase tracking-widest text-[#00ffff] mb-1">Message</label>
-        <textarea 
-          id="message" 
-          rows="4" 
-          required
-          class="w-full bg-neutral-950/50 border border-neutral-700 focus:border-[#ff5500] focus:ring-1 focus:ring-[#ff5500] text-white px-4 py-2 transition-all outline-none resize-none"
-        ></textarea>
-      </div>
-
-      <button 
-        type="submit" 
-        class="w-full mt-6 bg-transparent border border-[#00ffff] text-[#00ffff] hover:bg-[#00ffff] hover:text-black hover:shadow-[0_0_15px_rgba(0,255,255,0.8)] transition-all duration-300 uppercase tracking-wider font-bold px-4 py-3"
+    <div class="flex flex-col items-center mb-2">
+      <p class="text-neutral-400 text-sm mb-6 text-center">Ready to collaborate on your next project? Open a secure channel.</p>
+      <a 
+        href="mailto:matheuspscheidt@gmail.com"
+        class="w-full text-center bg-transparent border border-[#00ffff] text-[#00ffff] hover:bg-[#00ffff] hover:text-black hover:shadow-[0_0_15px_rgba(0,255,255,0.8)] transition-all duration-300 uppercase tracking-wider font-bold px-4 py-3 block"
       >
         Transmit Message
-      </button>
-    </form>
+      </a>
+    </div>
 
     <div class="mt-8 pt-6 border-t border-neutral-800 flex justify-center space-x-6">
       <a href="https://github.com/MAPscheidt" target="_blank" rel="noopener noreferrer" class="text-neutral-500 hover:text-white transition-colors" title="GitHub">
@@ -58,8 +29,3 @@
   </div>
 </template>
 
-<script setup lang="ts">
-const handleSubmit = () => {
-  alert('Contact form functionality not yet implemented in this preview.');
-};
-</script>

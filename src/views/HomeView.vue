@@ -1,6 +1,17 @@
 <template>
   <div id="app-scroll-viewport" class="relative w-full min-h-screen bg-[#0b0b0b] font-mono select-none">
     
+    <transition
+      enter-active-class="transition-opacity duration-300"
+      enter-from-class="opacity-0"
+      enter-to-class="opacity-100"
+      leave-active-class="transition-opacity duration-1000 ease-in-out"
+      leave-from-class="opacity-100"
+      leave-to-class="opacity-0"
+    >
+      <BootSequence v-if="isBooting" @complete="handleBootComplete" />
+    </transition>
+
     <div class="fixed inset-0 w-full h-full z-0 pointer-events-none">
       <Suspense>
         <template #default>
@@ -18,41 +29,46 @@
       
       <!-- Expanded About Overlay -->
       <transition 
-        enter-active-class="transition-transform duration-700 ease-out" 
-        enter-from-class="translate-y-full md:translate-y-0 md:translate-x-full" 
-        enter-to-class="translate-y-0 md:translate-x-0" 
-        leave-active-class="transition-transform duration-500 ease-in" 
-        leave-from-class="translate-y-0 md:translate-x-0" 
-        leave-to-class="translate-y-full md:translate-y-0 md:translate-x-full"
+        enter-active-class="transition-all duration-500 ease-out" 
+        enter-from-class="opacity-0 scale-95" 
+        enter-to-class="opacity-100 scale-100" 
+        leave-active-class="transition-all duration-300 ease-in" 
+        leave-from-class="opacity-100 scale-100" 
+        leave-to-class="opacity-0 scale-95"
       >
         <div 
           v-if="globalState.isAboutExpanded"
-          data-lenis-prevent
-          class="fixed inset-x-0 bottom-0 top-[50vh] md:top-0 md:inset-y-0 md:inset-x-auto md:right-0 w-full md:w-[60%] lg:w-[45%] bg-neutral-900/90 backdrop-blur-2xl border-t md:border-t-0 md:border-l border-[#00ffff]/30 z-50 p-8 md:p-16 overflow-y-auto overscroll-contain touch-pan-y !pointer-events-auto shadow-[0_-10px_50px_rgba(0,0,0,0.6)] md:shadow-[-30px_0_50px_rgba(0,0,0,0.6)]"
+          class="fixed inset-0 z-50 flex items-end md:items-center justify-end p-4 pb-8 md:p-12 pointer-events-auto!"
+          @click.self="toggleAboutExpanded"
         >
-          <button 
-            @click="toggleAboutExpanded"
-            class="absolute top-6 right-6 text-neutral-400 hover:text-white transition-colors p-2"
+          <div 
+            data-lenis-prevent
+            class="relative w-full max-w-2xl max-h-[60vh] md:max-h-full bg-neutral-900/80 backdrop-blur-md border-l-4 border-[#00ffff] rounded-none shadow-[0_0_30px_rgba(0,255,255,0.2)] p-6 md:p-16 overflow-y-auto overscroll-contain touch-pan-y"
           >
-            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-          </button>
+            <button 
+              @click="toggleAboutExpanded"
+              class="absolute top-6 right-6 text-neutral-400 hover:text-[#00ffff] transition-colors p-2 z-10"
+            >
+              <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
 
-          <h2 class="text-4xl font-black italic tracking-tighter text-[#00ffff] mb-8 mt-8 drop-shadow-[0_0_10px_rgba(0,255,255,0.4)]">DATABANKS EXPANDED</h2>
-          
-          <div class="space-y-6 text-neutral-300 leading-relaxed font-sans">
-            <p>This is where you can write an extensive, detailed history of your career. Because the main page scroll is paused, the user can freely scroll through this panel without losing their spot in the 3D cinematic timeline.</p>
+            <h2 class="text-4xl font-black italic tracking-tighter text-[#00ffff] mb-8 mt-2 md:mt-0 drop-shadow-[0_0_10px_rgba(0,255,255,0.4)]">USER_DOSSIER: MATHEUS</h2>
             
-            <p>I started my journey exploring how code could intersect with creative visual arts, leading me to specialize in Three.js and WebGL rendering within modern JS frameworks like Vue and React.</p>
-            
-            <h3 class="text-xl font-bold text-white mt-12 mb-4 uppercase tracking-widest border-b border-neutral-700 pb-2">Core Competencies</h3>
-            <ul class="grid grid-cols-2 gap-4">
-              <li class="flex items-center text-[#00ffff]"><span class="mr-3 opacity-50">⚡</span> Advanced Vue.js</li>
-              <li class="flex items-center text-[#00ffff]"><span class="mr-3 opacity-50">⚡</span> Three.js & WebGL</li>
-              <li class="flex items-center text-[#00ffff]"><span class="mr-3 opacity-50">⚡</span> Node & Express</li>
-              <li class="flex items-center text-[#00ffff]"><span class="mr-3 opacity-50">⚡</span> Database Architecture</li>
-              <li class="flex items-center text-[#00ffff]"><span class="mr-3 opacity-50">⚡</span> GSAP Animation</li>
-              <li class="flex items-center text-[#00ffff]"><span class="mr-3 opacity-50">⚡</span> UI/UX Design</li>
-            </ul>
+            <div class="space-y-6 text-neutral-300 leading-relaxed font-sans">
+              <p>This is where you can write an extensive, detailed history of your career. Because the main page scroll is paused, the user can freely scroll through this panel without losing their spot in the 3D cinematic timeline.</p>
+              
+              <p>I started my journey exploring how code could intersect with creative visual arts, leading me to specialize in Three.js and WebGL rendering within modern JS frameworks like Vue and React.</p>
+              
+              <h3 class="text-xl font-bold text-white mt-12 mb-4 uppercase tracking-widest border-b border-neutral-700 pb-2">Core Competencies</h3>
+              <ul class="grid grid-cols-2 gap-4">
+                <li class="flex items-center text-[#00ffff]"><span class="mr-3 opacity-50">⚡</span> Advanced Vue.js</li>
+                <li class="flex items-center text-[#00ffff]"><span class="mr-3 opacity-50">⚡</span> Three.js & WebGL</li>
+                <li class="flex items-center text-[#00ffff]"><span class="mr-3 opacity-50">⚡</span> Node & Express</li>
+                <li class="flex items-center text-[#00ffff]"><span class="mr-3 opacity-50">⚡</span> Database Architecture</li>
+                <li class="flex items-center text-[#00ffff]"><span class="mr-3 opacity-50">⚡</span> GSAP Animation</li>
+                <li class="flex items-center text-[#00ffff]"><span class="mr-3 opacity-50">⚡</span> UI/UX Design</li>
+              </ul>
+            </div>
           </div>
         </div>
       </transition>
@@ -65,13 +81,19 @@
         class="w-full flex flex-col pointer-events-boxnone"
       >
         <section class="w-full min-h-screen flex flex-col justify-between p-6 md:p-12 text-white">
-        <header class="flex justify-between items-start w-full mix-blend-difference">
-          <h1 class="text-3xl font-black tracking-tighter leading-none italic text-transparent bg-clip-text bg-gradient-to-r from-[#00ffff] to-[#ff00ff]">OUTATIME</h1>
-          <span class="text-xs uppercase tracking-widest text-[#00ffff] font-bold">HILL VALLEY, CA // 1985</span>
+        <header class="flex flex-col md:flex-row justify-between items-start w-full mix-blend-difference gap-4">
+          <div class="flex flex-col">
+            <h1 class="glitch-text text-4xl md:text-5xl font-black tracking-tighter leading-none italic text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.6)]" data-text="MATHEUS">MATHEUS</h1>
+            <span class="text-xs md:text-sm text-[#00ffff] font-mono mt-2">> SYS_ROLE: CREATIVE FULL-STACK ENGINEER // 3D SPECIALIST</span>
+          </div>
+          <div class="flex flex-col md:items-end">
+            <span class="text-xs uppercase tracking-widest text-[#ff00ff] font-bold">> LOC_TRACKING: ACTIVE</span>
+            <span class="text-xs uppercase tracking-widest text-[#00ffff] font-bold mt-1">GOLD COAST // AUS</span>
+          </div>
         </header>
         <div class="max-w-xl self-start mb-24 mix-blend-difference">
           <p class="text-lg md:text-2xl leading-relaxed font-semibold text-white drop-shadow-[0_0_8px_rgba(255,0,255,0.8)]">
-            Where we're going, we don't need roads. A real-time spatial cinematic experience.
+            Where we're going, we don't need roads. Keep scrolling to find out.
           </p>
         </div>
       </section>
@@ -134,12 +156,12 @@
         </div>
 
         <footer class="w-full border-t border-[#ff00ff]/30 pt-6 flex justify-between items-center text-xs text-[#ff00ff]">
-          <div>© 1985 DELOREAN MOTOR COMPANY</div>
+          <div>© DELOREAN MOTOR COMPANY</div>
           <button 
             @click="triggerEasterEgg"
-            class="hover:text-white hover:shadow-[0_0_10px_rgba(255,0,255,0.8)] transition-all duration-300 uppercase tracking-wider font-bold pointer-events-auto border border-[#ff00ff] px-4 py-2"
+            class="group hover:text-white hover:shadow-[0_0_15px_rgba(255,0,255,0.8)] transition-all duration-300 uppercase tracking-wider font-bold pointer-events-auto border border-[#ff00ff] px-4 py-2 hover:bg-[#ff00ff]/10"
           >
-            ENGAGE CIRCUITS →
+             <span class="glitch-text opacity-90 group-hover:opacity-100 transition-opacity" data-text="TIME TRAVEL">TIME TRAVEL</span>
           </button>
         </footer>
       </section>
@@ -170,6 +192,7 @@ import StudioScene from '../shared/components/StudioScene.vue';
 import ProjectCard from '../shared/components/ProjectCard.vue';
 import ContactForm from '../shared/components/ContactForm.vue';
 import TimeCircuits from '../shared/components/TimeCircuits.vue';
+import BootSequence from '../shared/components/BootSequence.vue';
 import { globalState } from '../shared/state';
 
 gsap.registerPlugin(ScrollTrigger);
@@ -178,6 +201,14 @@ let lenisEngine: Lenis | null = null;
 let animationFrameId: number | null = null;
 const speedTextRef = ref<HTMLElement | null>(null);
 const showTimeCircuits = ref(false);
+const isBooting = ref(true);
+
+const handleBootComplete = () => {
+  isBooting.value = false;
+  if (!globalState.isAboutExpanded) {
+    lenisEngine?.start();
+  }
+};
 
 const toggleAboutExpanded = () => {
   globalState.isAboutExpanded = !globalState.isAboutExpanded;
@@ -207,7 +238,7 @@ const triggerEasterEgg = () => {
   // 3. Temporal Displacement
   setTimeout(() => {
     // Reset shake
-    gsap.to('main', { x: 0, y: 0, duration: 0 }); 
+    gsap.set('main', { clearProps: 'transform' }); 
     
     // Snap scroll to 1985 (top of page)
     lenisEngine?.scrollTo(0, { immediate: true });
@@ -238,6 +269,10 @@ onMounted(() => {
 
   // Force Lenis to start at the absolute top
   lenisEngine.scrollTo(0, { immediate: true });
+
+  if (isBooting.value) {
+    lenisEngine.stop();
+  }
 
   window.addEventListener('beforeunload', () => {
     window.scrollTo(0, 0);
