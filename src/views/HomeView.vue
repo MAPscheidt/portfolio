@@ -234,7 +234,6 @@ onMounted(() => {
     gestureOrientation: 'vertical',
     smoothWheel: true,
     syncTouch: true,
-    smoothTouch: true,
   });
 
   // Force Lenis to start at the absolute top
