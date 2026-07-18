@@ -28,7 +28,7 @@
         <div 
           v-if="globalState.isAboutExpanded"
           data-lenis-prevent
-          class="fixed inset-x-0 bottom-0 top-[50vh] md:top-0 md:inset-y-0 md:inset-x-auto md:right-0 w-full md:w-[60%] lg:w-[45%] bg-neutral-900/90 backdrop-blur-2xl border-t md:border-t-0 md:border-l border-[#00ffff]/30 z-50 p-8 md:p-16 overflow-y-auto !pointer-events-auto shadow-[0_-10px_50px_rgba(0,0,0,0.6)] md:shadow-[-30px_0_50px_rgba(0,0,0,0.6)]"
+          class="fixed inset-x-0 bottom-0 top-[50vh] md:top-0 md:inset-y-0 md:inset-x-auto md:right-0 w-full md:w-[60%] lg:w-[45%] bg-neutral-900/90 backdrop-blur-2xl border-t md:border-t-0 md:border-l border-[#00ffff]/30 z-50 p-8 md:p-16 overflow-y-auto overscroll-contain touch-pan-y !pointer-events-auto shadow-[0_-10px_50px_rgba(0,0,0,0.6)] md:shadow-[-30px_0_50px_rgba(0,0,0,0.6)]"
         >
           <button 
             @click="toggleAboutExpanded"
@@ -233,6 +233,8 @@ onMounted(() => {
     orientation: 'vertical',
     gestureOrientation: 'vertical',
     smoothWheel: true,
+    syncTouch: true,
+    smoothTouch: true,
   });
 
   // Force Lenis to start at the absolute top
