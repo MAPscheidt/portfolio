@@ -6,6 +6,16 @@ body {
   background-color: #0b0b0b;
 }
 
+@media (hover: hover) and (pointer: fine) {
+  * {
+    cursor: none !important;
+  }
+
+  input, textarea, select {
+    cursor: auto !important;
+  }
+}
+
 #app {
   width: 100vw;
   min-height: 100vh;

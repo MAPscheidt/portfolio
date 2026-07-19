@@ -12,7 +12,7 @@
       <BootSequence v-if="isBooting" @complete="handleBootComplete" />
     </transition>
 
-    <div class="fixed inset-0 w-full h-full z-0 pointer-events-none">
+    <div class="fixed inset-0 w-full h-full z-0 pointer-events-auto">
       <Suspense>
         <template #default>
           <StudioScene />
@@ -43,26 +43,32 @@
         >
           <div 
             data-lenis-prevent
-            class="relative w-full max-w-2xl max-h-[60vh] md:max-h-full bg-neutral-900/80 backdrop-blur-md border-l-4 border-[#00ffff] rounded-none shadow-[0_0_30px_rgba(0,255,255,0.2)] p-6 md:p-16 overflow-y-auto overscroll-contain touch-pan-y"
+            class="relative flex flex-col w-full max-w-2xl max-h-[50vh] md:max-h-full bg-neutral-900/60 backdrop-blur-md border-l-4 border-[#00ffff] rounded-none shadow-[0_0_30px_rgba(0,255,255,0.2)]"
           >
-            <button 
-              @click="toggleAboutExpanded"
-              class="absolute top-6 right-6 text-neutral-400 hover:text-[#00ffff] transition-colors p-2 z-10"
-            >
-              <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-            </button>
+            <!-- Fixed Header Area -->
+            <div class="relative shrink-0 p-6 md:p-16 pb-4 md:pb-8 border-b border-neutral-900/60">
+              <button 
+                @click="toggleAboutExpanded"
+                class="absolute top-6 md:top-12 right-6 md:right-12 text-neutral-400 hover:text-[#00ffff] transition-colors p-2 z-10"
+              >
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+              </button>
 
-            <h2 class="text-4xl font-black italic tracking-tighter text-[#00ffff] mb-8 mt-2 md:mt-0 drop-shadow-[0_0_10px_rgba(0,255,255,0.4)]">USER_DOSSIER: {{ portfolioData.name }}</h2>
+              <h2 class="text-3xl md:text-4xl font-black italic tracking-tighter text-[#00ffff] pr-12 drop-shadow-[0_0_10px_rgba(0,255,255,0.4)]">USER_DOSSIER: {{ portfolioData.name }}</h2>
+            </div>
             
-            <div class="space-y-6 text-neutral-300 leading-relaxed font-sans">
-              <p v-for="(paragraph, index) in portfolioData.expandedBio" :key="index">{{ paragraph }}</p>
-              
-              <h3 class="text-xl font-bold text-white mt-12 mb-4 uppercase tracking-widest border-b border-neutral-700 pb-2">Core Competencies</h3>
-              <ul class="grid grid-cols-2 gap-4">
-                <li v-for="(skill, index) in portfolioData.competencies" :key="index" class="flex items-center text-[#00ffff]">
-                  <span class="mr-3 opacity-50">⚡</span> {{ skill }}
-                </li>
-              </ul>
+            <!-- Scrollable Content Area -->
+            <div class="flex-1 overflow-y-auto overscroll-contain touch-pan-y p-6 md:p-16 pt-4 md:pt-8">
+              <div class="space-y-6 text-neutral-300 leading-relaxed font-sans">
+                <p v-for="(paragraph, index) in portfolioData.expandedBio" :key="index">{{ paragraph }}</p>
+                
+                <h3 class="text-xl font-bold text-white mt-12 mb-4 uppercase tracking-widest border-b border-neutral-700 pb-2">Core Competencies</h3>
+                <ul class="grid grid-cols-2 gap-4">
+                  <li v-for="(skill, index) in portfolioData.competencies" :key="index" class="flex items-center text-[#00ffff]">
+                    <span class="mr-3 opacity-50">⚡</span> {{ skill }}
+                  </li>
+                </ul>
+              </div>
             </div>
           </div>
         </div>
@@ -70,8 +76,8 @@
       
       <div 
         :class="{ 
-          'opacity-0 pointer-events-none transition-opacity duration-700': globalState.isAboutExpanded, 
-          'opacity-100 transition-opacity duration-700': !globalState.isAboutExpanded 
+          'opacity-0 pointer-events-none transition-opacity duration-700': globalState.isAboutExpanded || globalState.isDriveInMode || globalState.isDriveInReturning, 
+          'opacity-100 transition-opacity duration-700': !globalState.isAboutExpanded && !globalState.isDriveInMode && !globalState.isDriveInReturning
         }"
         class="w-full flex flex-col pointer-events-boxnone"
       >
@@ -167,7 +173,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, onUnmounted, ref } from 'vue';
+import { onMounted, onUnmounted, ref, watch } from 'vue';
 import Lenis from 'lenis';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
@@ -235,8 +241,16 @@ const triggerEasterEgg = () => {
     
     // Trigger the 3D drive-in animation exactly as the UI starts fading out
     globalState.isEasterEggActive = false;
-  }, 3000); // 3-second sequence
+  }, 3000); 
 };
+
+watch(() => globalState.isDriveInMode || globalState.isDriveInReturning, (isActive) => {
+  if (isActive) {
+    lenisEngine?.stop();
+  } else if (!globalState.isAboutExpanded) {
+    lenisEngine?.start();
+  }
+});
 
 onMounted(() => {
   // Prevent browser from restoring previous scroll position on reload

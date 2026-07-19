@@ -16,10 +16,10 @@ I started my journey exploring how code could intersect with creative visual art
 ## Core Competencies
 
 - Advanced Vue.js
-- Three.js & WebGL
+- Javasript
 - Node & Express
-- Database Architecture
-- GSAP Animation
+- DB Architecture
+- Typescript
 - UI/UX Design
 
 ## Projects
