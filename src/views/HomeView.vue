@@ -52,21 +52,16 @@
               <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
             </button>
 
-            <h2 class="text-4xl font-black italic tracking-tighter text-[#00ffff] mb-8 mt-2 md:mt-0 drop-shadow-[0_0_10px_rgba(0,255,255,0.4)]">USER_DOSSIER: MATHEUS</h2>
+            <h2 class="text-4xl font-black italic tracking-tighter text-[#00ffff] mb-8 mt-2 md:mt-0 drop-shadow-[0_0_10px_rgba(0,255,255,0.4)]">USER_DOSSIER: {{ portfolioData.name }}</h2>
             
             <div class="space-y-6 text-neutral-300 leading-relaxed font-sans">
-              <p>This is where you can write an extensive, detailed history of your career. Because the main page scroll is paused, the user can freely scroll through this panel without losing their spot in the 3D cinematic timeline.</p>
-              
-              <p>I started my journey exploring how code could intersect with creative visual arts, leading me to specialize in Three.js and WebGL rendering within modern JS frameworks like Vue and React.</p>
+              <p v-for="(paragraph, index) in portfolioData.expandedBio" :key="index">{{ paragraph }}</p>
               
               <h3 class="text-xl font-bold text-white mt-12 mb-4 uppercase tracking-widest border-b border-neutral-700 pb-2">Core Competencies</h3>
               <ul class="grid grid-cols-2 gap-4">
-                <li class="flex items-center text-[#00ffff]"><span class="mr-3 opacity-50">⚡</span> Advanced Vue.js</li>
-                <li class="flex items-center text-[#00ffff]"><span class="mr-3 opacity-50">⚡</span> Three.js & WebGL</li>
-                <li class="flex items-center text-[#00ffff]"><span class="mr-3 opacity-50">⚡</span> Node & Express</li>
-                <li class="flex items-center text-[#00ffff]"><span class="mr-3 opacity-50">⚡</span> Database Architecture</li>
-                <li class="flex items-center text-[#00ffff]"><span class="mr-3 opacity-50">⚡</span> GSAP Animation</li>
-                <li class="flex items-center text-[#00ffff]"><span class="mr-3 opacity-50">⚡</span> UI/UX Design</li>
+                <li v-for="(skill, index) in portfolioData.competencies" :key="index" class="flex items-center text-[#00ffff]">
+                  <span class="mr-3 opacity-50">⚡</span> {{ skill }}
+                </li>
               </ul>
             </div>
           </div>
@@ -83,12 +78,12 @@
         <section class="w-full min-h-screen flex flex-col justify-between p-6 md:p-12 text-white">
         <header class="flex flex-col md:flex-row justify-between items-start w-full mix-blend-difference gap-4">
           <div class="flex flex-col">
-            <h1 class="glitch-text text-4xl md:text-5xl font-black tracking-tighter leading-none italic text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.6)]" data-text="MATHEUS">MATHEUS</h1>
-            <span class="text-xs md:text-sm text-[#00ffff] font-mono mt-2">> SYS_ROLE: CREATIVE FULL-STACK ENGINEER // 3D SPECIALIST</span>
+            <h1 class="glitch-text text-4xl md:text-5xl font-black tracking-tighter leading-none italic text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.6)]" :data-text="portfolioData.name">{{ portfolioData.name }}</h1>
+            <span class="text-xs md:text-sm text-[#00ffff] font-mono mt-2">{{ portfolioData.role }}</span>
           </div>
           <div class="flex flex-col md:items-end">
             <span class="text-xs uppercase tracking-widest text-[#ff00ff] font-bold">> LOC_TRACKING: ACTIVE</span>
-            <span class="text-xs uppercase tracking-widest text-[#00ffff] font-bold mt-1">GOLD COAST // AUS</span>
+            <span class="text-xs uppercase tracking-widest text-[#00ffff] font-bold mt-1">{{ portfolioData.location }}</span>
           </div>
         </header>
         <div class="max-w-xl self-start mb-24 mix-blend-difference">
@@ -103,7 +98,7 @@
         <div class="w-full max-w-md bg-neutral-900/60 backdrop-blur-md p-8 border-l-4 border-[#00ffff] rounded-none shadow-[0_0_15px_rgba(0,255,255,0.3)] pointer-events-auto">
           <h2 class="text-xs uppercase tracking-widest text-[#00ffff] mb-4 font-bold">// ABOUT ME</h2>
           <p class="text-sm leading-loose text-neutral-300">
-            I am a passionate Full-Stack Developer blending creative design with high-performance engineering. I specialize in building immersive web experiences, modern web applications, and interactive 3D environments that push the boundaries of what the browser can do.
+            {{ portfolioData.aboutMe }}
           </p>
           <button 
             @click="toggleAboutExpanded"
@@ -120,25 +115,13 @@
         
         <div class="flex flex-col space-y-32 w-full max-w-6xl mx-auto">
           <ProjectCard 
-            class="self-start"
-            title="Nexus E-Commerce" 
-            description="A high-performance headless e-commerce platform featuring real-time inventory tracking, AI-driven recommendations, and seamless checkout." 
-            :technologies="['Vue 3', 'Nuxt', 'Tailwind', 'Stripe']" 
-            link="#" 
-          />
-          <ProjectCard 
-            class="self-end"
-            title="Chronos Dashboard" 
-            description="Enterprise analytics dashboard with WebGL data visualization, real-time WebSocket streams, and customizable widget layouts." 
-            :technologies="['React', 'Three.js', 'Node.js', 'PostgreSQL']" 
-            link="#" 
-          />
-          <ProjectCard 
-            class="self-start"
-            title="Aura UI Library" 
-            description="An open-source glassmorphism UI component library built from the ground up for modern web applications." 
-            :technologies="['TypeScript', 'CSS', 'Vite', 'Storybook']" 
-            link="#" 
+            v-for="(project, index) in portfolioData.projects"
+            :key="index"
+            :class="index % 2 === 0 ? 'self-start' : 'self-end'"
+            :title="project.title" 
+            :description="project.description" 
+            :technologies="project.technologies" 
+            :link="project.link" 
           />
         </div>
       </section>
@@ -194,8 +177,12 @@ import ContactForm from '../shared/components/ContactForm.vue';
 import TimeCircuits from '../shared/components/TimeCircuits.vue';
 import BootSequence from '../shared/components/BootSequence.vue';
 import { globalState } from '../shared/state';
+import { parseReadme } from '../shared/useReadme';
+import rawReadme from '../../README.md?raw';
 
 gsap.registerPlugin(ScrollTrigger);
+
+const portfolioData = parseReadme(rawReadme);
 
 let lenisEngine: Lenis | null = null;
 let animationFrameId: number | null = null;

@@ -1,6 +1,10 @@
 <template>
   <div class="fixed inset-0 bg-black z-[100] flex flex-col items-center justify-center p-4 gap-4 md:gap-8 font-mono pointer-events-none overflow-hidden">
     
+    <!-- Lightning and Flash Effects -->
+    <div ref="lightningOverlay" class="fixed inset-0 bg-[#00ffff] z-[190] opacity-0 pointer-events-none mix-blend-color-dodge"></div>
+    <div ref="flashOverlay" class="fixed inset-0 bg-white z-[200] opacity-0 pointer-events-none mix-blend-screen"></div>
+
     <!-- DESTINATION TIME (RED) -->
     <div class="flex flex-col items-center transform scale-[0.6] sm:scale-75 md:scale-100">
       <div class="bg-neutral-400 p-2 md:p-4 rounded flex space-x-1 md:space-x-2 border-b-[12px] border-neutral-600 shadow-2xl">
@@ -158,7 +162,8 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, onMounted, onUnmounted } from 'vue';
+import { reactive, onMounted, onUnmounted, ref } from 'vue';
+import { gsap } from 'gsap';
 
 const months = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
 const pad = (num: number, size: number) => num.toString().padStart(size, '0');
@@ -187,6 +192,9 @@ const present = reactive({
 });
 const last = reactive({ month: 'NOV', day: '05', year: '1955', hour: '06', min: '00' });
 
+const lightningOverlay = ref<HTMLElement | null>(null);
+const flashOverlay = ref<HTMLElement | null>(null);
+
 let intervalId: any = null;
 
 onMounted(() => {
@@ -207,6 +215,27 @@ onMounted(() => {
     dest.year = '1985';
     dest.hour = '01';
     dest.min = '21';
+
+    // Lightning effect starting shortly after lock-in
+    if (lightningOverlay.value) {
+      gsap.to(lightningOverlay.value, {
+        opacity: 0.8,
+        duration: 0.05,
+        repeat: 15,
+        yoyo: true,
+        ease: 'power1.inOut',
+        delay: 0.5 // Start around 2.0s total time
+      });
+    }
+
+    // Blinding white flash peaking at exactly 3.0s total time
+    if (flashOverlay.value) {
+      gsap.to(flashOverlay.value, {
+        opacity: 1,
+        duration: 0.2,
+        delay: 1.3 // Starts at 2.8s total time
+      });
+    }
   }, 1500);
 });
 
