@@ -103,7 +103,7 @@
           <div>© DELOREAN MOTOR COMPANY</div>
           <button 
             @click="triggerEasterEgg"
-            class="group hover:text-white hover:shadow-[0_0_15px_rgba(255,0,255,0.8)] transition-all duration-300 uppercase tracking-wider font-bold pointer-events-auto border border-[#ff00ff] px-4 py-2 hover:bg-[#ff00ff]/10"
+            class="group flash-attention hover:text-white hover:shadow-[0_0_15px_rgba(255,0,255,0.8)] transition-all duration-300 uppercase tracking-wider font-bold pointer-events-auto border border-[#ff00ff] px-4 py-2 hover:bg-[#ff00ff]/10"
           >
              <span class="glitch-text opacity-90 group-hover:opacity-100 transition-opacity" data-text="TIME TRAVEL">TIME TRAVEL</span>
           </button>

@@ -30,11 +30,10 @@ An all-in-one offline-first PWA for nutrition tracking, workout programming, and
 _Technologies: Vue 3, TypeScript, Vite, Tailwind, Supabase, IndexedDB, Chart.js, Stripe, PWA_
 \_Link: https://achievoo.netlify.app\_
 
-### Chronos Dashboard
+### 3D Developer Portfolio (Current)
 
-Enterprise analytics dashboard with WebGL data visualization, real-time WebSocket streams, and customizable widget layouts.
-_Technologies: React, Three.js, Node.js, PostgreSQL_
-_Link: #_
+An immersive, gamified 3D portfolio experience built with Vue and TresJS themed in the movie Back to the Future. Features WebGL rendering, custom GSAP camera animations, and interactive spatial UI designed to push the boundaries of modern web development.
+_Technologies: Vue 3, TresJS, Three.js, GSAP, Tailwind_
 
 ### Aura UI Library
 

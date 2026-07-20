@@ -67,3 +67,26 @@ body {
   100% { clip-path: inset(5% 0 80% 0); transform: translate(-1px, -1px); }
 }
 
+/* Attention Flash for Time Travel Button */
+@keyframes flash-attention {
+  0%, 90%, 100% {
+    background-color: transparent;
+    box-shadow: 0 0 0px rgba(255,0,255,0);
+    text-shadow: none;
+  }
+  92%, 96% {
+    background-color: rgba(255, 0, 255, 0.2);
+    box-shadow: 0 0 15px rgba(255, 0, 255, 0.8);
+    text-shadow: 0 0 8px rgba(255, 255, 255, 0.8);
+  }
+  94% {
+    background-color: transparent;
+    box-shadow: 0 0 0px rgba(255,0,255,0);
+    text-shadow: none;
+  }
+}
+
+.flash-attention {
+  animation: flash-attention 4s infinite;
+}
+

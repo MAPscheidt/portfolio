@@ -84,7 +84,7 @@ export function parseReadme(rawMarkdown: string): PortfolioData {
       
       let description = '';
       let technologies: string[] = [];
-      let link = '#';
+      let link = '';
       
       for (let i = 1; i < lines.length; i++) {
         const line = lines[i].trim();
