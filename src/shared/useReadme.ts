@@ -5,6 +5,11 @@ export interface Project {
   link: string;
 }
 
+export interface Social {
+  name: string;
+  url: string;
+}
+
 export interface PortfolioData {
   name: string;
   role: string;
@@ -13,6 +18,7 @@ export interface PortfolioData {
   expandedBio: string[];
   competencies: string[];
   projects: Project[];
+  socials: Social[];
 }
 
 export function parseReadme(rawMarkdown: string): PortfolioData {
@@ -23,7 +29,8 @@ export function parseReadme(rawMarkdown: string): PortfolioData {
     aboutMe: '',
     expandedBio: [],
     competencies: [],
-    projects: []
+    projects: [],
+    socials: []
   };
 
   // 1. Extract Header Info (Name, Role, Location)
@@ -74,7 +81,7 @@ export function parseReadme(rawMarkdown: string): PortfolioData {
     .filter(line => line.length > 0 && !line.startsWith('##'));
 
   // 5. Extract Projects
-  const projectsText = extractSection('Projects');
+  const projectsText = extractSection('Projects', 'Socials');
   if (projectsText) {
     const projectBlocks = projectsText.split('### ').filter(p => p.trim().length > 0);
     
@@ -105,6 +112,19 @@ export function parseReadme(rawMarkdown: string): PortfolioData {
         link
       };
     });
+  }
+
+  // 6. Extract Socials
+  const socialsText = extractSection('Socials');
+  if (socialsText) {
+    const regex = /\[!\[(.*?)\]\([^)]+\)\]\(([^)]+)\)/g;
+    let match;
+    while ((match = regex.exec(socialsText)) !== null) {
+      data.socials.push({
+        name: match[1],
+        url: match[2]
+      });
+    }
   }
 
   return data;
