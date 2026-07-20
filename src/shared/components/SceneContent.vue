@@ -60,14 +60,14 @@
   </TresGroup>
 
   <!-- HOVERBOARD ZONE -->
-  <TresGroup ref="hoverboardGroupRef" :position="[20, 2, 40] as any" :visible="globalState.isAboutExpanded">
+  <TresGroup ref="hoverboardGroupRef" :position="[10, 2, 40] as any" :visible="globalState.isAboutExpanded">
     <!-- Neon Underglow -->
     <TresPointLight :position="[0, -1, 0] as any" color="#ff00ff" :intensity="5" :distance="10" />
     <TresPointLight :position="[0, 1, 0] as any" color="#00ffff" :intensity="2" :distance="10" />
     
     <!-- Glowing Hoverboard Model -->
     <TresGroup ref="hoverboardMeshRef">
-      <GLTFModel :path="`${baseUrl}models/back_to_the_future_ii_-_hover_board_low_poly.glb`" draco :scale="[1, 1, 1] as any" />
+      <GLTFModel :path="`${baseUrl}models/back_to_the_future_ii_-_hover_board_low_poly.glb`" draco :scale="[0.5, 0.5, 0.5] as any" />
     </TresGroup>
   </TresGroup>
 
@@ -87,22 +87,17 @@
   </TresGroup>
 
   <!-- DATABANKS ZONE (ABOUT ME) -->
-  <TresGroup :position="[250, 0, 40] as any" :visible="isDatabanksVisible">
+  <TresGroup ref="databanksGroupRef" :position="[250, 0, 40] as any" :visible="isDatabanksVisible">
     <!-- The Databanks Screen -->
     <TresMesh :position="[0, 16, 0] as any" :rotation="[0, -Math.PI / 2, 0] as any" :scale="[2.5, 2.5, 2.5] as any">
       <TresPlaneGeometry :args="[16, 22]" />
       <TresMeshBasicMaterial color="#000000" />
       <Html transform wrapper-class="databanks-html-wrapper" :distance-factor="15">
-        <div v-show="isDatabanksVisible" class="w-[800px] h-[1100px] bg-neutral-900/90 flex flex-col border-4 border-[#00ffff] rounded-xl shadow-[0_0_50px_rgba(0,255,255,0.5)] overflow-hidden font-mono text-white">
+        <div v-show="isDatabanksVisible" class="w-200 h-250 bg-neutral-900/90 flex flex-col border-4 border-[#00ffff] rounded-xl shadow-[0_0_50px_rgba(0,255,255,0.5)] overflow-hidden font-mono text-white">
           <!-- Header Area -->
-          <div class="relative shrink-0 p-8 border-b border-neutral-800">
-            <button 
-              @click="closeDatabanks"
-              class="absolute top-8 right-8 text-neutral-400 hover:text-[#00ffff] transition-colors p-2 z-10"
-            >
-              <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-            </button>
-            <h2 class="text-4xl font-black italic tracking-tighter text-[#00ffff] drop-shadow-[0_0_10px_rgba(0,255,255,0.4)] pr-12">USER_DOSSIER: {{ portfolioData.name }}</h2>
+          <div class="relative shrink-0 p-8 border-b border-neutral-800 flex items-center gap-8">
+            <img :src="`${baseUrl}low_poly_profile.png`" alt="User Profile" class="w-32 h-32 rounded-xl border-4 border-[#ff00ff] shadow-[0_0_20px_rgba(255,0,255,0.5)] object-cover shrink-0" />
+            <h2 class="text-5xl font-black italic tracking-tighter text-[#00ffff] drop-shadow-[0_0_10px_rgba(0,255,255,0.4)] pr-12">USER_DOSSIER:<br/><span class="text-white mt-2 inline-block">{{ portfolioData.name }}</span></h2>
           </div>
           <!-- Scrollable Content Area -->
           <div class="flex-1 overflow-y-auto p-8 pointer-events-auto">
@@ -116,6 +111,21 @@
                 </li>
               </ul>
             </div>
+          </div>
+          <!-- Footer Actions -->
+          <div class="shrink-0 p-8 border-t border-neutral-800 flex flex-col gap-4 pointer-events-auto">
+            <button 
+              @click="toggleZoom"
+              class="w-full py-4 bg-[#00ffff]/10 hover:bg-[#00ffff]/20 border-2 border-[#00ffff] rounded-lg text-[#00ffff] font-bold text-2xl transition-all shadow-[0_0_15px_rgba(0,255,255,0.3)] hover:shadow-[0_0_25px_rgba(0,255,255,0.6)] uppercase tracking-wider"
+            >
+              {{ isZoomed ? 'RESTORE VIEW' : 'BRING CLOSER' }}
+            </button>
+            <button 
+              @click="closeDatabanks"
+              class="w-full py-4 bg-[#ff00ff]/10 hover:bg-[#ff00ff]/20 border-2 border-[#ff00ff] rounded-lg text-[#ff00ff] font-bold text-2xl transition-all shadow-[0_0_15px_rgba(255,0,255,0.3)] hover:shadow-[0_0_25px_rgba(255,0,255,0.6)] uppercase tracking-wider"
+            >
+              CLOSE DOSSIER
+            </button>
           </div>
         </div>
       </Html>
@@ -137,6 +147,7 @@
 
 <script setup lang="ts">
 import { onMounted, onUnmounted, shallowRef, watch, ref } from 'vue';
+import { useWindowSize } from '@vueuse/core';
 import { EffectComposerPmndrs, ChromaticAberrationPmndrs, NoisePmndrs } from '@tresjs/post-processing';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
@@ -167,9 +178,55 @@ const overloadLightRef = shallowRef<any>(null);
 const easterEggWrapperRef = shallowRef<any>(null);
 const isScreenVisible = ref(false);
 const isDatabanksVisible = ref(false);
+const databanksGroupRef = shallowRef<any>(null);
+const isZoomed = ref(false);
+
+const { width: windowWidth } = useWindowSize();
+
+const toggleZoom = () => {
+  if (!databanksGroupRef.value) return;
+  isZoomed.value = !isZoomed.value;
+  
+  const isMobile = windowWidth.value < 768;
+  const targetScale = isMobile ? 0.35 : 0.6;
+  const targetY = isMobile ? -5 : -15;
+  
+  gsap.to(databanksGroupRef.value.position, {
+    x: isZoomed.value ? 65 : 250,
+    y: isZoomed.value ? targetY : 0,
+    duration: 1.5,
+    ease: 'power3.inOut'
+  });
+  
+  gsap.to(databanksGroupRef.value.scale, {
+    x: isZoomed.value ? targetScale : 1,
+    y: isZoomed.value ? targetScale : 1,
+    z: isZoomed.value ? targetScale : 1,
+    duration: 1.5,
+    ease: 'power3.inOut'
+  });
+};
 
 const closeDatabanks = () => {
   globalState.isAboutExpanded = false;
+  if (isZoomed.value) {
+    isZoomed.value = false;
+    if (databanksGroupRef.value) {
+      gsap.to(databanksGroupRef.value.position, {
+        x: 250,
+        y: 0,
+        duration: 1.5,
+        ease: 'power3.inOut'
+      });
+      gsap.to(databanksGroupRef.value.scale, {
+        x: 1,
+        y: 1,
+        z: 1,
+        duration: 1.5,
+        ease: 'power3.inOut'
+      });
+    }
+  }
 };
 
 const onCarClick = () => {
