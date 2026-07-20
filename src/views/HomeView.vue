@@ -12,7 +12,10 @@
       <BootSequence v-if="isBooting" @complete="handleBootComplete" />
     </transition>
 
-    <div class="fixed inset-0 w-full h-full z-0 pointer-events-auto">
+    <div :class="[
+      'fixed inset-0 w-full h-full pointer-events-auto',
+      (globalState.isAboutExpanded || globalState.isDriveInMode) ? 'z-20' : 'z-0'
+    ]">
       <Suspense>
         <template #default>
           <StudioScene />
@@ -25,7 +28,10 @@
       </Suspense>
     </div>
 
-    <main class="relative z-10 w-full flex flex-col pointer-events-boxnone overflow-hidden">
+    <main :class="[
+      'relative w-full flex flex-col pointer-events-boxnone overflow-hidden',
+      (globalState.isAboutExpanded || globalState.isAboutReturning || globalState.isDriveInMode || globalState.isDriveInReturning) ? 'z-0 !pointer-events-none' : 'z-10'
+    ]">
       
       <!-- 2D Expanded About Overlay has been moved to a 3D panel in SceneContent.vue -->
       
@@ -201,8 +207,10 @@ const triggerEasterEgg = () => {
 watch(() => globalState.isDriveInMode || globalState.isDriveInReturning || globalState.isAboutExpanded || globalState.isAboutReturning, (isActive) => {
   if (isActive) {
     lenisEngine?.stop();
+    document.body.style.overflow = 'hidden';
   } else {
     lenisEngine?.start();
+    document.body.style.overflow = '';
   }
 });
 

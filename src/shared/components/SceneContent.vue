@@ -93,14 +93,19 @@
       <TresPlaneGeometry :args="[16, 22]" />
       <TresMeshBasicMaterial color="#000000" />
       <Html transform wrapper-class="databanks-html-wrapper" :distance-factor="15">
-        <div v-show="isDatabanksVisible" class="w-200 h-250 bg-neutral-900/90 flex flex-col border-4 border-[#00ffff] rounded-xl shadow-[0_0_50px_rgba(0,255,255,0.5)] overflow-hidden font-mono text-white">
+        <div v-show="isDatabanksVisible" class="pointer-events-auto w-200 h-250 bg-neutral-900/90 flex flex-col border-4 border-[#00ffff] rounded-xl shadow-[0_0_50px_rgba(0,255,255,0.5)] overflow-hidden font-mono text-white" style="touch-action: auto;" data-lenis-prevent>
           <!-- Header Area -->
           <div class="relative shrink-0 p-8 border-b border-neutral-800 flex items-center gap-8">
             <img :src="`${baseUrl}low_poly_profile.png`" alt="User Profile" class="w-32 h-32 rounded-xl border-4 border-[#ff00ff] shadow-[0_0_20px_rgba(255,0,255,0.5)] object-cover shrink-0" />
             <h2 class="text-5xl font-black italic tracking-tighter text-[#00ffff] drop-shadow-[0_0_10px_rgba(0,255,255,0.4)] pr-12">USER_DOSSIER:<br/><span class="text-white mt-2 inline-block">{{ portfolioData.name }}</span></h2>
           </div>
           <!-- Scrollable Content Area -->
-          <div class="flex-1 overflow-y-auto p-8 pointer-events-auto">
+          <div 
+            ref="dossierScrollRef"
+            class="flex-1 min-h-0 overflow-y-auto p-8" 
+            style="touch-action: pan-y; -webkit-overflow-scrolling: touch; overscroll-behavior: contain;"
+            data-lenis-prevent
+          >
             <div class="space-y-6 text-2xl text-neutral-300 leading-relaxed font-sans max-w-4xl">
               <p v-for="(paragraph, index) in portfolioData.expandedBio" :key="index">{{ paragraph }}</p>
               
@@ -113,7 +118,7 @@
             </div>
           </div>
           <!-- Footer Actions -->
-          <div class="shrink-0 p-8 border-t border-neutral-800 flex flex-col gap-4 pointer-events-auto">
+          <div class="shrink-0 p-8 border-t border-neutral-800 flex flex-col gap-4">
             <button 
               @click="toggleZoom"
               class="w-full py-4 bg-[#00ffff]/10 hover:bg-[#00ffff]/20 border-2 border-[#00ffff] rounded-lg text-[#00ffff] font-bold text-2xl transition-all shadow-[0_0_15px_rgba(0,255,255,0.3)] hover:shadow-[0_0_25px_rgba(0,255,255,0.6)] uppercase tracking-wider"
@@ -179,7 +184,46 @@ const easterEggWrapperRef = shallowRef<any>(null);
 const isScreenVisible = ref(false);
 const isDatabanksVisible = ref(false);
 const databanksGroupRef = shallowRef<any>(null);
+const dossierScrollRef = ref<HTMLElement | null>(null);
 const isZoomed = ref(false);
+
+// Manual touch scrolling for the dossier panel.
+// CSS overflow-y inside 3D-transformed HTML elements is broken on mobile browsers,
+// so we handle touch events programmatically.
+let touchStartY = 0;
+let scrollStartTop = 0;
+
+const onTouchStart = (e: TouchEvent) => {
+  touchStartY = e.touches[0].clientY;
+  scrollStartTop = dossierScrollRef.value?.scrollTop ?? 0;
+};
+
+const onTouchMove = (e: TouchEvent) => {
+  if (!dossierScrollRef.value) return;
+  e.preventDefault();
+  const deltaY = touchStartY - e.touches[0].clientY;
+  dossierScrollRef.value.scrollTop = scrollStartTop + deltaY;
+};
+
+onMounted(() => {
+  // Attach manual touch scroll once the ref is available
+  const tryAttach = () => {
+    if (dossierScrollRef.value) {
+      dossierScrollRef.value.addEventListener('touchstart', onTouchStart, { passive: true });
+      dossierScrollRef.value.addEventListener('touchmove', onTouchMove, { passive: false });
+    } else {
+      setTimeout(tryAttach, 500);
+    }
+  };
+  tryAttach();
+});
+
+onUnmounted(() => {
+  if (dossierScrollRef.value) {
+    dossierScrollRef.value.removeEventListener('touchstart', onTouchStart);
+    dossierScrollRef.value.removeEventListener('touchmove', onTouchMove);
+  }
+});
 
 const { width: windowWidth } = useWindowSize();
 
@@ -189,7 +233,7 @@ const toggleZoom = () => {
   
   const isMobile = windowWidth.value < 768;
   const targetScale = isMobile ? 0.35 : 0.6;
-  const targetY = isMobile ? -5 : -15;
+  const targetY = isMobile ? -10 : -15;
   
   gsap.to(databanksGroupRef.value.position, {
     x: isZoomed.value ? 65 : 250,
