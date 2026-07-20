@@ -232,7 +232,7 @@ const toggleZoom = () => {
   isZoomed.value = !isZoomed.value;
   
   const isMobile = windowWidth.value < 768;
-  const targetScale = isMobile ? 0.35 : 0.6;
+  const targetScale = isMobile ? 0.4 : 0.6;
   const targetY = isMobile ? -10 : -15;
   
   gsap.to(databanksGroupRef.value.position, {
