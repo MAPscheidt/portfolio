@@ -71,23 +71,19 @@
     </TresGroup>
   </TresGroup>
 
-  <!-- DRIVE-IN ZONE (VIDEO) -->
-  <TresGroup :position="[250, 0, -40] as any" :visible="isScreenVisible">
-    <!-- The Drive-In Screen -->
-    <TresMesh :position="[0, 20, 0] as any" :rotation="[0, -Math.PI / 2, 0] as any" :scale="[2.5, 2.5, 2.5] as any">
-      <TresPlaneGeometry :args="[24, 13.5]" />
-      <TresMeshBasicMaterial color="#000000" />
-      <Html transform wrapper-class="drive-in-html-wrapper" :distance-factor="15">
-        <div v-show="isScreenVisible" class="w-[1280px] h-[720px] bg-black/80 flex flex-col items-center justify-center border-4 border-[#00ffff] rounded-xl shadow-[0_0_50px_rgba(0,255,255,0.5)]">
-          <p class="text-[#ff00ff] text-5xl font-black italic tracking-widest font-mono drop-shadow-[0_0_15px_rgba(255,0,255,1)]">[ VIDEO ASSET HERE ]</p>
-          <p class="text-[#00ffff] text-2xl font-mono mt-8 uppercase font-bold">> Click the car to return <</p>
-        </div>
-      </Html>
-    </TresMesh>
+  <!-- CLOCK TOWER ZONE -->
+  <TresGroup :position="[80, 0, -40] as any" :visible="isScreenVisible">
+    <!-- The Clock Tower -->
+    <TresGroup :position="[0, 0, 0] as any" :scale="[2, 2, 2] as any" :rotation="[0, -Math.PI / 2, 0] as any">
+      <GLTFModel :path="`${baseUrl}models/clock_tower.glb`" draco />
+    </TresGroup>
     
-    <!-- Neon Lighting for Screen Area -->
-    <TresPointLight :position="[-5, 2, 0] as any" color="#ff00ff" :intensity="20" :distance="30" />
-    <TresPointLight :position="[0, -2, 0] as any" color="#00ffff" :intensity="10" :distance="20" />
+    <!-- Lighting for Clock Tower Area -->
+    <!-- Main white light to illuminate the building -->
+    <TresPointLight :position="[10, 15, 15] as any" color="#ffffff" :intensity="300" :distance="150" />
+    <!-- Pink and Cyan rim/fill lights to keep the retro aesthetic -->
+    <TresPointLight :position="[-15, 10, -5] as any" color="#ff00ff" :intensity="200" :distance="100" />
+    <TresPointLight :position="[15, 2, 5] as any" color="#00ffff" :intensity="150" :distance="100" />
   </TresGroup>
 
   <!-- DATABANKS ZONE (ABOUT ME) -->
