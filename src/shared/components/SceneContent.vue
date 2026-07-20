@@ -60,7 +60,7 @@
   </TresGroup>
 
   <!-- HOVERBOARD ZONE -->
-  <TresGroup ref="hoverboardGroupRef" :position="[15, 1.5, 0] as any" :visible="globalState.isAboutExpanded">
+  <TresGroup ref="hoverboardGroupRef" :position="[20, 2, 40] as any" :visible="globalState.isAboutExpanded">
     <!-- Neon Underglow -->
     <TresPointLight :position="[0, -1, 0] as any" color="#ff00ff" :intensity="5" :distance="10" />
     <TresPointLight :position="[0, 1, 0] as any" color="#00ffff" :intensity="2" :distance="10" />
@@ -71,7 +71,7 @@
     </TresGroup>
   </TresGroup>
 
-  <!-- DRIVE-IN ZONE -->
+  <!-- DRIVE-IN ZONE (VIDEO) -->
   <TresGroup :position="[250, 0, -40] as any" :visible="isScreenVisible">
     <!-- The Drive-In Screen -->
     <TresMesh :position="[0, 20, 0] as any" :rotation="[0, -Math.PI / 2, 0] as any" :scale="[2.5, 2.5, 2.5] as any">
@@ -88,6 +88,46 @@
     <!-- Neon Lighting for Screen Area -->
     <TresPointLight :position="[-5, 2, 0] as any" color="#ff00ff" :intensity="20" :distance="30" />
     <TresPointLight :position="[0, -2, 0] as any" color="#00ffff" :intensity="10" :distance="20" />
+  </TresGroup>
+
+  <!-- DATABANKS ZONE (ABOUT ME) -->
+  <TresGroup :position="[250, 0, 40] as any" :visible="isDatabanksVisible">
+    <!-- The Databanks Screen -->
+    <TresMesh :position="[0, 16, 0] as any" :rotation="[0, -Math.PI / 2, 0] as any" :scale="[2.5, 2.5, 2.5] as any">
+      <TresPlaneGeometry :args="[16, 22]" />
+      <TresMeshBasicMaterial color="#000000" />
+      <Html transform wrapper-class="databanks-html-wrapper" :distance-factor="15">
+        <div v-show="isDatabanksVisible" class="w-[800px] h-[1100px] bg-neutral-900/90 flex flex-col border-4 border-[#00ffff] rounded-xl shadow-[0_0_50px_rgba(0,255,255,0.5)] overflow-hidden font-mono text-white">
+          <!-- Header Area -->
+          <div class="relative shrink-0 p-8 border-b border-neutral-800">
+            <button 
+              @click="closeDatabanks"
+              class="absolute top-8 right-8 text-neutral-400 hover:text-[#00ffff] transition-colors p-2 z-10"
+            >
+              <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+            <h2 class="text-4xl font-black italic tracking-tighter text-[#00ffff] drop-shadow-[0_0_10px_rgba(0,255,255,0.4)] pr-12">USER_DOSSIER: {{ portfolioData.name }}</h2>
+          </div>
+          <!-- Scrollable Content Area -->
+          <div class="flex-1 overflow-y-auto p-8 pointer-events-auto">
+            <div class="space-y-6 text-2xl text-neutral-300 leading-relaxed font-sans max-w-4xl">
+              <p v-for="(paragraph, index) in portfolioData.expandedBio" :key="index">{{ paragraph }}</p>
+              
+              <h3 class="text-3xl font-bold text-white mt-12 mb-6 uppercase tracking-widest border-b border-neutral-700 pb-2">Core Competencies</h3>
+              <ul class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <li v-for="(skill, index) in portfolioData.competencies" :key="index" class="flex items-center text-[#00ffff]">
+                  <span class="mr-3 opacity-50">⚡</span> {{ skill }}
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </Html>
+    </TresMesh>
+    
+    <!-- Neon Lighting for Databanks Area -->
+    <TresPointLight :position="[-5, 2, 0] as any" color="#00ffff" :intensity="20" :distance="30" />
+    <TresPointLight :position="[0, -2, 0] as any" color="#ff00ff" :intensity="10" :distance="20" />
   </TresGroup>
 
   <!-- Post-processing -->
@@ -109,8 +149,11 @@ import { useLoop } from '@tresjs/core';
 import { GLTFModel, Html } from '@tresjs/cientos';
 import { Box3, Vector3 } from 'three';
 import { globalState } from '../state';
+import { parseReadme } from '../useReadme';
+import rawReadme from '../../../README.md?raw';
 
 const baseUrl = import.meta.env.BASE_URL;
+const portfolioData = parseReadme(rawReadme);
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -127,8 +170,15 @@ const hoverboardMeshRef = shallowRef<any>(null);
 const overloadLightRef = shallowRef<any>(null);
 const easterEggWrapperRef = shallowRef<any>(null);
 const isScreenVisible = ref(false);
+const isDatabanksVisible = ref(false);
+
+const closeDatabanks = () => {
+  globalState.isAboutExpanded = false;
+};
 
 const onCarClick = () => {
+  if (globalState.isAboutExpanded || globalState.isAboutReturning) return;
+  
   if (easterEggWrapperRef.value && !gsap.isTweening(easterEggWrapperRef.value.position) && !globalState.isEasterEggActive) {
     globalState.isDriveInMode = !globalState.isDriveInMode;
   }
@@ -255,64 +305,151 @@ onMounted(() => {
     // Initial look at
     camera.lookAt(0, 1, 0);
 
-    // --- Camera Hijack Logic for Expanded Panel ---
+    // --- Camera Hijack Logic for Expanded Panel (Databanks Drive-In) ---
     let preHijackPos = { x: 0, y: 0, z: 0 };
     const currentLookAt = { x: 0, y: 1, z: 0 }; // Track current look target for smooth rotation
+    const camStateAbout = { blend: 0 };
     
-    watch(() => globalState.isAboutExpanded, (expanded) => {
-      if (expanded) {
-        // Save current position
+    watch(() => globalState.isAboutExpanded, (isAbout) => {
+      if (isAbout) {
+        isDatabanksVisible.value = true;
         preHijackPos = { x: camera.position.x, y: camera.position.y, z: camera.position.z };
+        camStateAbout.blend = 0;
         
-        const isMobile = window.innerWidth < 768;
-        // Position camera behind the hoverboard (x: 15) to see the DeLorean (x: 0)
-        // Raised Y to 3.5 for a "from the top" perspective.
-        // Mobile looks steeply down (-7.6) to push subjects to the top 50% of the screen.
-        // Desktop looks moderately down (-2.4) to vertically balance subjects.
-        const camTargetPos = isMobile ? { x: 19.5, y: 3.5, z: 0 } : { x: 19.5, y: 3.5, z: -2 };
-        const camLookTarget = isMobile ? { x: 0, y: -7.6, z: 0 } : { x: 0, y: -2.4, z: -2 };
+        const startLookX = currentLookAt.x;
+        const startLookY = currentLookAt.y;
+        const startLookZ = currentLookAt.z;
+
+        const updateCameraGTA = () => {
+          if (!camera || !easterEggWrapperRef.value || globalState.isDriveInMode) return;
+          
+          const carPos = easterEggWrapperRef.value.position;
+          const carRotY = easterEggWrapperRef.value.rotation.y;
+          
+          const distance = 15;
+          const height = 5;
+          
+          const gtaCamX = carPos.x + Math.cos(carRotY) * distance;
+          const gtaCamZ = carPos.z - Math.sin(carRotY) * distance;
+          const gtaCamY = carPos.y + height;
+          
+          const gtaLookX = carPos.x;
+          const gtaLookY = carPos.y + 2;
+          const gtaLookZ = carPos.z;
+
+          if (camStateAbout.blend < 1) {
+             camera.position.set(
+               preHijackPos.x + (gtaCamX - preHijackPos.x) * camStateAbout.blend,
+               preHijackPos.y + (gtaCamY - preHijackPos.y) * camStateAbout.blend,
+               preHijackPos.z + (gtaCamZ - preHijackPos.z) * camStateAbout.blend
+             );
+             currentLookAt.x = startLookX + (gtaLookX - startLookX) * camStateAbout.blend;
+             currentLookAt.y = startLookY + (gtaLookY - startLookY) * camStateAbout.blend;
+             currentLookAt.z = startLookZ + (gtaLookZ - startLookZ) * camStateAbout.blend;
+             camera.lookAt(currentLookAt.x, currentLookAt.y, currentLookAt.z);
+          } else {
+             camera.position.set(gtaCamX, gtaCamY, gtaCamZ);
+             currentLookAt.x = gtaLookX;
+             currentLookAt.y = gtaLookY;
+             currentLookAt.z = gtaLookZ;
+             camera.lookAt(currentLookAt.x, currentLookAt.y, currentLookAt.z);
+          }
+        };
+
+        const tl = gsap.timeline({ onUpdate: updateCameraGTA });
+
+        // 1. Blend Camera In
+        tl.to(camStateAbout, { blend: 1, duration: 1.5, ease: 'power2.inOut' }, 0);
+
+        // 2. Drive to Databanks Screen (Left Turn Route)
+        // Leg 1: Drive straight to x: -10
+        tl.to(easterEggWrapperRef.value.position, { x: -10, duration: 1, ease: 'power2.in' }, "leg1");
         
-        // Fly camera to the dedicated Hoverboard Zone
-        gsap.to(camera.position, {
-          x: camTargetPos.x, 
-          y: camTargetPos.y, 
-          z: camTargetPos.z,
-          duration: 1.5,
-          ease: 'power3.inOut',
-        });
+        // Corner 1: Arc from (-10, 0) to (-20, 10). Rotates to +90 deg.
+        tl.to(easterEggWrapperRef.value.position, { x: -20, duration: 1, ease: 'sine.out' }, "corner1");
+        tl.to(easterEggWrapperRef.value.position, { z: 10, duration: 1, ease: 'sine.in' }, "corner1");
+        tl.to(easterEggWrapperRef.value.rotation, { y: Math.PI / 2, duration: 1, ease: 'none' }, "corner1");
+        
+        // Leg 2: Drive straight to z: 30
+        tl.to(easterEggWrapperRef.value.position, { z: 30, duration: 1, ease: 'none' }, "leg2");
+        
+        // Corner 2: Arc from (-20, 30) to (-10, 40). Rotates to +180 deg.
+        tl.to(easterEggWrapperRef.value.position, { x: -10, duration: 1, ease: 'sine.in' }, "corner2");
+        tl.to(easterEggWrapperRef.value.position, { z: 40, duration: 1, ease: 'sine.out' }, "corner2");
+        tl.to(easterEggWrapperRef.value.rotation, { y: Math.PI, duration: 1, ease: 'none' }, "corner2");
+        
+        // Leg 3: Drive straight and park at x: 5
+        tl.to(easterEggWrapperRef.value.position, { x: 5, duration: 1.5, ease: 'power2.out' }, "leg3");
 
-        // Smoothly rotate the camera instead of snapping
-        gsap.to(currentLookAt, {
-          x: camLookTarget.x,
-          y: camLookTarget.y,
-          z: camLookTarget.z,
-          duration: 1.5,
-          ease: 'power3.inOut',
-          onUpdate: () => {
-            camera.lookAt(currentLookAt.x, currentLookAt.y, currentLookAt.z);
-          }
-        });
-      } else if (!globalState.isDriveInMode) { // Ensure we don't return if switching modes
-        // Return camera to exact timeline position
-        gsap.to(camera.position, {
-          x: preHijackPos.x,
-          y: preHijackPos.y,
-          z: preHijackPos.z,
-          duration: 1.2,
-          ease: 'power3.inOut',
-        });
+      } else {
+        globalState.isAboutReturning = true;
+        
+        const updateCameraGTAReturn = () => {
+          if (!camera || !easterEggWrapperRef.value || globalState.isDriveInMode) return;
+          
+          const carPos = easterEggWrapperRef.value.position;
+          const carRotY = easterEggWrapperRef.value.rotation.y;
+          
+          const distance = 15;
+          const height = 5;
+          
+          const gtaCamX = carPos.x + Math.cos(carRotY) * distance;
+          const gtaCamZ = carPos.z - Math.sin(carRotY) * distance;
+          const gtaCamY = carPos.y + height;
+          
+          const gtaLookX = carPos.x;
+          const gtaLookY = carPos.y + 2;
+          const gtaLookZ = carPos.z;
 
-        // Return rotation to original timeline state
-        gsap.to(currentLookAt, {
-          x: 0,
-          y: 1,
-          z: 0,
-          duration: 1.2,
-          ease: 'power3.inOut',
-          onUpdate: () => {
-            camera.lookAt(currentLookAt.x, currentLookAt.y, currentLookAt.z);
+          if (camStateAbout.blend > 0) {
+             camera.position.set(
+               preHijackPos.x + (gtaCamX - preHijackPos.x) * camStateAbout.blend,
+               preHijackPos.y + (gtaCamY - preHijackPos.y) * camStateAbout.blend,
+               preHijackPos.z + (gtaCamZ - preHijackPos.z) * camStateAbout.blend
+             );
+             currentLookAt.x = 0 + (gtaLookX - 0) * camStateAbout.blend;
+             currentLookAt.y = 1 + (gtaLookY - 1) * camStateAbout.blend;
+             currentLookAt.z = 0 + (gtaLookZ - 0) * camStateAbout.blend;
+             camera.lookAt(currentLookAt.x, currentLookAt.y, currentLookAt.z);
+          } else {
+             camera.lookAt(0, 1, 0);
           }
-        });
+        };
+
+        const tl = gsap.timeline({ onUpdate: updateCameraGTAReturn });
+
+        // Phase 3: Return to origin (Left Turn Route)
+        // Leg 4: Drive straight to x: 15
+        tl.to(easterEggWrapperRef.value.position, { x: 15, duration: 1, ease: 'power2.in' }, "leg4");
+        
+        // Corner 3: Arc from (15, 40) to (25, 30). Rotates to +270 deg.
+        tl.to(easterEggWrapperRef.value.position, { x: 25, duration: 1, ease: 'sine.out' }, "corner3");
+        tl.to(easterEggWrapperRef.value.position, { z: 30, duration: 1, ease: 'sine.in' }, "corner3");
+        tl.to(easterEggWrapperRef.value.rotation, { y: Math.PI * 1.5, duration: 1, ease: 'none' }, "corner3");
+        
+        // Leg 5: Drive straight to z: 10
+        tl.to(easterEggWrapperRef.value.position, { z: 10, duration: 1, ease: 'none' }, "leg5");
+        
+        // Corner 4: Arc from (25, 10) to (15, 0). Rotates to +360 deg.
+        tl.to(easterEggWrapperRef.value.position, { x: 15, duration: 1, ease: 'sine.in' }, "corner4");
+        tl.to(easterEggWrapperRef.value.position, { z: 0, duration: 1, ease: 'sine.out' }, "corner4");
+        tl.to(easterEggWrapperRef.value.rotation, { y: Math.PI * 2, duration: 1, ease: 'none' }, "corner4");
+        
+        // Leg 6: Drive straight and park at x: 0
+        tl.to(easterEggWrapperRef.value.position, { x: 0, duration: 1.5, ease: 'power2.out' }, "leg6");
+        
+        // Blend the camera back to scroll state as it parks
+        tl.to(camStateAbout, { blend: 0, duration: 1.5, ease: 'power2.inOut' }, "leg6");
+        
+        // Hide screen after animation is fully complete and normalize rotation
+        tl.call(() => {
+          isDatabanksVisible.value = false;
+          globalState.isAboutReturning = false;
+          if (easterEggWrapperRef.value) {
+            // Reset rotation to 0 to prevent spinning on next drive
+            easterEggWrapperRef.value.rotation.y = 0;
+          }
+        }, undefined, 5.0);
       }
     });
 

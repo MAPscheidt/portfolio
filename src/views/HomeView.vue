@@ -27,57 +27,12 @@
 
     <main class="relative z-10 w-full flex flex-col pointer-events-boxnone overflow-hidden">
       
-      <!-- Expanded About Overlay -->
-      <transition 
-        enter-active-class="transition-all duration-500 ease-out" 
-        enter-from-class="opacity-0 scale-95" 
-        enter-to-class="opacity-100 scale-100" 
-        leave-active-class="transition-all duration-300 ease-in" 
-        leave-from-class="opacity-100 scale-100" 
-        leave-to-class="opacity-0 scale-95"
-      >
-        <div 
-          v-if="globalState.isAboutExpanded"
-          class="fixed inset-0 z-50 flex items-end md:items-center justify-end p-4 pb-8 md:p-12 pointer-events-auto!"
-          @click.self="toggleAboutExpanded"
-        >
-          <div 
-            data-lenis-prevent
-            class="relative flex flex-col w-full max-w-2xl max-h-[50vh] md:max-h-full bg-neutral-900/60 backdrop-blur-md border-l-4 border-[#00ffff] rounded-none shadow-[0_0_30px_rgba(0,255,255,0.2)]"
-          >
-            <!-- Fixed Header Area -->
-            <div class="relative shrink-0 p-6 md:p-16 pb-4 md:pb-8 border-b border-neutral-900/60">
-              <button 
-                @click="toggleAboutExpanded"
-                class="absolute top-6 md:top-12 right-6 md:right-12 text-neutral-400 hover:text-[#00ffff] transition-colors p-2 z-10"
-              >
-                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-              </button>
-
-              <h2 class="text-3xl md:text-4xl font-black italic tracking-tighter text-[#00ffff] pr-12 drop-shadow-[0_0_10px_rgba(0,255,255,0.4)]">USER_DOSSIER: {{ portfolioData.name }}</h2>
-            </div>
-            
-            <!-- Scrollable Content Area -->
-            <div class="flex-1 overflow-y-auto overscroll-contain touch-pan-y p-6 md:p-16 pt-4 md:pt-8">
-              <div class="space-y-6 text-neutral-300 leading-relaxed font-sans">
-                <p v-for="(paragraph, index) in portfolioData.expandedBio" :key="index">{{ paragraph }}</p>
-                
-                <h3 class="text-xl font-bold text-white mt-12 mb-4 uppercase tracking-widest border-b border-neutral-700 pb-2">Core Competencies</h3>
-                <ul class="grid grid-cols-2 gap-4">
-                  <li v-for="(skill, index) in portfolioData.competencies" :key="index" class="flex items-center text-[#00ffff]">
-                    <span class="mr-3 opacity-50">⚡</span> {{ skill }}
-                  </li>
-                </ul>
-              </div>
-            </div>
-          </div>
-        </div>
-      </transition>
+      <!-- 2D Expanded About Overlay has been moved to a 3D panel in SceneContent.vue -->
       
       <div 
         :class="{ 
-          'opacity-0 pointer-events-none transition-opacity duration-700': globalState.isAboutExpanded || globalState.isDriveInMode || globalState.isDriveInReturning, 
-          'opacity-100 transition-opacity duration-700': !globalState.isAboutExpanded && !globalState.isDriveInMode && !globalState.isDriveInReturning
+          'opacity-0 pointer-events-none transition-opacity duration-700': globalState.isAboutExpanded || globalState.isAboutReturning || globalState.isDriveInMode || globalState.isDriveInReturning, 
+          'opacity-100 transition-opacity duration-700': !globalState.isAboutExpanded && !globalState.isAboutReturning && !globalState.isDriveInMode && !globalState.isDriveInReturning
         }"
         class="w-full flex flex-col pointer-events-boxnone"
       >
@@ -204,11 +159,10 @@ const handleBootComplete = () => {
 };
 
 const toggleAboutExpanded = () => {
+  if (globalState.isDriveInMode || globalState.isDriveInReturning || globalState.isAboutReturning || globalState.isEasterEggActive) return;
   globalState.isAboutExpanded = !globalState.isAboutExpanded;
   if (globalState.isAboutExpanded) {
     lenisEngine?.stop();
-  } else {
-    lenisEngine?.start();
   }
 };
 
@@ -244,10 +198,10 @@ const triggerEasterEgg = () => {
   }, 3000); 
 };
 
-watch(() => globalState.isDriveInMode || globalState.isDriveInReturning, (isActive) => {
+watch(() => globalState.isDriveInMode || globalState.isDriveInReturning || globalState.isAboutExpanded || globalState.isAboutReturning, (isActive) => {
   if (isActive) {
     lenisEngine?.stop();
-  } else if (!globalState.isAboutExpanded) {
+  } else {
     lenisEngine?.start();
   }
 });
