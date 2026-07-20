@@ -30,7 +30,7 @@
 
     <main :class="[
       'relative w-full flex flex-col pointer-events-boxnone overflow-hidden',
-      (globalState.isAboutExpanded || globalState.isAboutReturning || globalState.isDriveInMode || globalState.isDriveInReturning) ? 'z-0 !pointer-events-none' : 'z-10'
+      (globalState.isAboutExpanded || globalState.isAboutReturning || globalState.isDriveInMode || globalState.isDriveInReturning) ? 'z-0 pointer-events-none!' : 'z-10'
     ]">
       
       <!-- 2D Expanded About Overlay has been moved to a 3D panel in SceneContent.vue -->
@@ -55,7 +55,7 @@
         </header>
         <div class="max-w-xl self-start mb-24 mix-blend-difference">
           <p class="text-lg md:text-2xl leading-relaxed font-semibold text-white drop-shadow-[0_0_8px_rgba(255,0,255,0.8)]">
-            Where we're going, we don't need roads. Keep scrolling to find out.
+            "Where we're going, we don't need roads." Scroll to find out more or click the car to drive and explore.
           </p>
         </div>
       </section>
