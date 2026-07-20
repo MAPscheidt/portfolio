@@ -54,8 +54,11 @@
           </div>
         </header>
         <div class="max-w-xl self-start mb-24 mix-blend-difference">
-          <p class="text-lg md:text-2xl leading-relaxed font-semibold text-white drop-shadow-[0_0_8px_rgba(255,0,255,0.8)]">
-            "Where we're going, we don't need roads." Scroll to find out more or click the car to drive and explore.
+          <p class="text-lg md:text-2xl leading-relaxed font-semibold text-white drop-shadow-[0_0_8px_rgba(255,0,255,0.8)] mb-3">
+            "Where we're going, we don't need roads."
+          </p>
+          <p class="text-xs md:text-sm text-[#00ffff] font-mono uppercase tracking-widest opacity-80">
+            Scroll to find out more or click the car to drive and explore.
           </p>
         </div>
       </section>

@@ -5,22 +5,22 @@
 
 ## About Me
 
-I am a passionate Full-Stack Developer blending creative design with high-performance engineering. I specialize in building immersive web experiences, modern web applications, and interactive 3D environments that push the boundaries of what the browser can do.
+I am a passionate developer driven to blend creative design with high-performance engineering. I focus on building immersive, interactive web experiences, modern applications, and useful tools that improve efficiency.
 
 ## Expanded Bio
 
-This is where you can write an extensive, detailed history of your career. Because the main page scroll is paused, the user can freely scroll through this panel without losing their spot in the 3D cinematic timeline.
+I started my career in Production Engineering, working across process optimization, failure analysis, and data analytics. Those roles trained me to find root causes instead of symptoms, and to trust data over assumptions. Along the way I built BI dashboards, managed CRM systems, and ran time studies to remove inefficiency from production lines.
 
-I started my journey exploring how code could intersect with creative visual arts, leading me to specialize in Three.js and WebGL rendering within modern JS frameworks like Vue and React.
+That same mindset pulled me into software development. I'm now building Achievoo, a full-stack nutrition and fitness PWA, from the ground up as a solo developer, using Vue 3.5, TypeScript, Pinia, Supabase, and an offline-first architecture backed by IndexedDB. I care about clean, feature-based structure, surgical code changes over rewrites, and systems that stay reliable even without a network connection. I'm now looking to bring that same discipline into a professional development team.
 
 ## Core Competencies
 
-- Advanced Vue.js
-- Javasript
-- Node & Express
-- DB Architecture
-- Typescript
-- UI/UX Design
+- Vue.js & TypeScript
+- Pinia (State Management)
+- Supabase (PostgreSQL, RLS, Edge Functions)
+- Offline-First / PWA Architecture
+- Process Optimization & Root Cause Analysis
+- Data Analytics (Power BI, SQL)
 
 ## Projects
 
@@ -34,12 +34,6 @@ _Technologies: Vue 3, TypeScript, Vite, Tailwind, Supabase, IndexedDB, Chart.js,
 
 An immersive, gamified 3D portfolio experience built with Vue and TresJS themed in the movie Back to the Future. Features WebGL rendering, custom GSAP camera animations, and interactive spatial UI designed to push the boundaries of modern web development.
 _Technologies: Vue 3, TresJS, Three.js, GSAP, Tailwind_
-
-### Aura UI Library
-
-An open-source glassmorphism UI component library built from the ground up for modern web applications.
-_Technologies: TypeScript, CSS, Vite, Storybook_
-_Link: #_
 
 ## Socials
 
