@@ -74,7 +74,7 @@
   <!-- CLOCK TOWER ZONE -->
   <TresGroup :position="[80, 0, -40] as any" :visible="isScreenVisible">
     <!-- The Clock Tower -->
-    <TresGroup :position="[0, 0, 0] as any" :scale="[2, 2, 2] as any" :rotation="[0, -Math.PI / 2, 0] as any">
+    <TresGroup :position="[0, 0, 0] as any" :scale="[1.7, 1.7, 1.7] as any" :rotation="[0, -Math.PI / 2, 0] as any">
       <GLTFModel :path="`${baseUrl}models/clock_tower.glb`" draco />
     </TresGroup>
     
