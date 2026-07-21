@@ -11,7 +11,11 @@ I am a passionate developer driven to blend creative design with high-performanc
 
 I started my career in Production Engineering, working across process optimization, failure analysis, and data analytics. Those roles trained me to find root causes instead of symptoms, and to trust data over assumptions. Along the way I built BI dashboards, managed CRM systems, and ran time studies to remove inefficiency from production lines.
 
-That same mindset pulled me into software development. I'm now building Achievoo, a full-stack nutrition and fitness PWA, from the ground up as a solo developer, using Vue 3.5, TypeScript, Pinia, Supabase, and an offline-first architecture backed by IndexedDB. I care about clean, feature-based structure, surgical code changes over rewrites, and systems that stay reliable even without a network connection. I'm now looking to bring that same discipline into a professional development team.
+Chasing a bit of adventure and wanting to sharpen my English, I left Brazil for Australia on a working holiday, drawn in by the beaches and the weather. That trip turned into a new home. I am now an Australian citizen based in Coolangatta, Queensland.
+
+That same curiosity pulled me into software development. I'm now building Achievoo, a full-stack nutrition and fitness PWA, from the ground up as a solo developer, using Vue 3.5, TypeScript, Pinia, Supabase, and an offline-first architecture backed by IndexedDB. I care about clean, feature-based structure, surgical code changes over rewrites, and systems that stay reliable even without a network connection.
+
+Outside of code, you'll usually find me at the gym or out in nature. I'm a big fan of technology and science fiction (yes, this portfolio's Back to the Future theme was very much on purpose), and I'm now looking to bring my engineering discipline and love for building things into a professional development team.
 
 ## Core Competencies
 
